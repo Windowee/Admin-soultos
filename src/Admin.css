@@ -1,0 +1,82 @@
+/* Remove margins and padding from body and html */
+body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background-color: #121212; /* Light black */
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Ensures it takes full height of the viewport */
+    background-color: #121212; /* Light black */
+}
+
+/* Navbar styling */
+.navbar {
+    background: linear-gradient(180deg, #4b0082, #ff4500);
+    padding: 20px 0;
+    text-align: center;
+    color: white;
+    flex: 0 0 60px; /* Fixed height for navbar */
+}
+
+    /* Flex container for the links inside the navbar */
+    .navbar ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center; /* Center the links horizontally */
+        align-items: center; /* Align the links vertically */
+    }
+
+    /* Nav links styling */
+    .navbar li {
+        margin: 0 20px; /* Space between links */
+    }
+
+        .navbar li a {
+            display: block;
+            color: white; /* Makes the text white */
+            font-size: 18px;
+            text-decoration: none;
+            padding: 10px 20px;
+            transition: background 0.3s ease;
+        }
+
+            .navbar li a:hover {
+                background-color: rgba(255, 255, 255, 0.2); /* Adds a hover effect */
+                border-radius: 4px;
+            }
+
+/* Main content styling */
+.content {
+    flex: 1; /* Allow content to grow and take available space */
+    padding: 20px;
+    background-color: #121212; /* Light black for content area */
+    overflow: auto; /* Allow scrolling if content exceeds viewport height */
+}
+
+/* Search bar styling */
+.search-bar {
+    margin-bottom: 10px;
+}
+
+    .search-bar input {
+        width: 40%;
+        padding: 8px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+/* Header styling */
+h1 {
+    color: #333;
+}
+
+p {
+    color: #555;
+}
