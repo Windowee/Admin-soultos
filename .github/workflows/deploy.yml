@@ -23,7 +23,7 @@ jobs:
       - name: Remove old image on Hetzner VPS
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: 37.27.196.76
+          host: ${{ secrets.HETZNER_VPS_IP }}
           username: ${{ secrets.HETZNER_VPS_USER }}
           key: ${{ secrets.HETZNER_SSH_KEY }}
           script: |
@@ -32,7 +32,7 @@ jobs:
       - name: Copy image to Hetzner VPS
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: 37.27.196.76
+          host: ${{ secrets.HETZNER_VPS_IP }}
           username: ${{ secrets.HETZNER_VPS_USER }}
           key: ${{ secrets.HETZNER_SSH_KEY }}
           source: "windowee-admin.tar"
@@ -42,7 +42,7 @@ jobs:
       - name: Deploy on Hetzner VPS
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: 37.27.196.76
+          host: ${{ secrets.HETZNER_VPS_IP }}
           username: ${{ secrets.HETZNER_VPS_USER }}
           key: ${{ secrets.HETZNER_SSH_KEY }}
           script: |
