@@ -1,0 +1,52 @@
+name: Build and Push Docker Image to Hetzner VPS
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t windowee-admin:latest .
+
+      - name: Save Docker image
+        run: |
+          docker save -o windowee-admin.tar windowee-admin:latest
+          chmod 664 windowee-admin.tar
+
+      - name: Remove old image on Hetzner VPS
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.HETZNER_VPS_IP }}
+          username: ${{ secrets.HETZNER_VPS_USER }}
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          script: |
+            rm -f /tmp/windowee-admin.tar
+
+      - name: Copy image to Hetzner VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HETZNER_VPS_IP }}
+          username: ${{ secrets.HETZNER_VPS_USER }}
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          source: "windowee-admin.tar"
+          target: "/tmp"
+          overwrite: true
+
+      - name: Deploy on Hetzner VPS
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.HETZNER_VPS_IP }}
+          username: ${{ secrets.HETZNER_VPS_USER }}
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          script: |
+            docker container rm -f windowee-admin || true
+            docker image rm -f windowee-admin:latest || true
+            docker image load -i /tmp/windowee-admin.tar
+            docker container run -d -p 80:80 --name windowee-admin windowee-admin:latest
