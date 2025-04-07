@@ -10,7 +10,7 @@ const SharePage = () => {
             ? pathSegments[postIndex + 1]
             : null;
 
-    let dynamicLink = `https://www.windowee.com/post/${id}`;
+    let dynamicLink = `http://37.27.196.76/event/${id}`;
 
     const referrer = document.referrer;
     const isFacebook =
