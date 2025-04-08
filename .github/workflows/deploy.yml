@@ -49,4 +49,4 @@ jobs:
             docker container rm -f windowee-admin || true
             docker image rm -f windowee-admin:latest || true
             docker image load -i /tmp/windowee-admin.tar
-            docker container run -d -p 80:80 --name windowee-admin windowee-admin:latest
+            docker container run -d -p 4001:80 --name windowee-admin windowee-admin:latest
