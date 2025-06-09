@@ -1,0 +1,251 @@
+/* AdminInsertBusiness.css */
+
+.register-container {
+    min-height: 100vh;
+    background-color: #0f0f0f;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-wrapper {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.register-card {
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    padding: 40px;
+    color: white;
+}
+
+.page-title {
+    text-align: center;
+    color: #4b0082;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.message {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+    padding: 12px 16px;
+    border: 1px solid #333;
+    border-radius: 6px;
+    background-color: #2a2a2a;
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #4b0082;
+    box-shadow: 0 0 0 3px rgba(75, 0, 130, 0.2);
+}
+
+.form-group input::placeholder {
+    color: #888;
+    opacity: 1;
+}
+
+.form-group input:focus::placeholder {
+    opacity: 0.7;
+}
+
+/* Select dropdown styling */
+.form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+    cursor: pointer;
+}
+
+.form-group select:hover {
+    border-color: #4b0082;
+}
+
+.submit-button {
+    padding: 16px 32px;
+    background: linear-gradient(135deg, #4b0082, #ff4500);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.submit-button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #5d0099, #ff5722);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.submit-button:disabled:hover {
+    background: linear-gradient(135deg, #4b0082, #ff4500);
+    transform: none;
+    box-shadow: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .register-container {
+        padding: 16px;
+    }
+    
+    .register-card {
+        padding: 24px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        margin-bottom: 24px;
+    }
+    
+    .register-form {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-card {
+        padding: 20px;
+    }
+    
+    .page-title {
+        font-size: 1.75rem;
+    }
+    
+    .submit-button {
+        padding: 14px 24px;
+        font-size: 14px;
+    }
+}
+
+/* Focus states for better accessibility */
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #4b0082;
+    box-shadow: 0 0 0 3px rgba(75, 0, 130, 0.2);
+}
+
+/* Required field indicator */
+.form-group label:after {
+    content: "";
+}
+
+.form-group label:has(+ input[required]):after,
+.form-group label:has(+ select[required]):after {
+    content: " *";
+    color: #ff4500;
+}
+
+/* Smooth transitions */
+* {
+    box-sizing: border-box;
+}
+
+.form-group input,
+.form-group select {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.form-group input:hover,
+.form-group select:hover {
+    border-color: #4b0082;
+}
+
+/* Loading state */
+.submit-button:disabled {
+    position: relative;
+}
+
+.submit-button:disabled:after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
