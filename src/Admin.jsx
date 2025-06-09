@@ -6,13 +6,14 @@ import SharePage from './SharePage';
 import AdminOrders from './AdminOrders';
 import AdminPayments from './AdminPayments';
 import AdminVerifications from './AdminVerifications';
+import AdminInsertBusiness from './AdminInsertBusiness'; // New import
 
 function AdminApp() {
     return (
         <Router>
             <Routes>
                 {/* SharePage route outside of AdminLogin and header */}
-                <Route path="/event/:id" element={<SharePage />} />
+                <Route path="assets/admin/event/:id" element={<SharePage />} />
 
                 {/* Admin routes wrapped in AdminLogin */}
                 <Route
@@ -27,6 +28,7 @@ function AdminApp() {
                                             <li><Link to="/admin/orders">Orders</Link></li>
                                             <li><Link to="/admin/payments">Payments</Link></li>
                                             <li><Link to="/admin/verifications">Verifications</Link></li>
+                                            <li><Link to="/admin/insert-business">Insert Business</Link></li>
                                         </ul>
                                     </nav>
                                 </div>
@@ -38,6 +40,7 @@ function AdminApp() {
                                     <Route path="orders" element={<AdminOrders />} />
                                     <Route path="payments" element={<AdminPayments />} />
                                     <Route path="verifications" element={<AdminVerifications />} />
+                                    <Route path="insert-business" element={<AdminInsertBusiness />} />
                                 </Routes>
                             </main>
                         </AdminLogin>
@@ -49,4 +52,5 @@ function AdminApp() {
 }
 
 export default AdminApp;
+
 
