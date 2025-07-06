@@ -15,6 +15,9 @@ function AdminApp() {
                 {/* SharePage route outside of AdminLogin and header */}
                 <Route path="assets/admin/event/:id" element={<SharePage />} />
 
+                {/* Public Insert Business route (no authentication required) */}
+                <Route path="/admin/insert-business" element={<AdminInsertBusiness />} />
+
                 {/* Admin routes wrapped in AdminLogin */}
                 <Route
                     path="/admin/*"
@@ -40,7 +43,6 @@ function AdminApp() {
                                     <Route path="orders" element={<AdminOrders />} />
                                     <Route path="payments" element={<AdminPayments />} />
                                     <Route path="verifications" element={<AdminVerifications />} />
-                                    <Route path="insert-business" element={<AdminInsertBusiness />} />
                                 </Routes>
                             </main>
                         </AdminLogin>
