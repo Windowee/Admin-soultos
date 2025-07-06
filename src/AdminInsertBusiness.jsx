@@ -180,7 +180,7 @@ const AdminInsertBusiness = () => {
                         <div className="form-row">
                             <div className="form-group">
                                 <label htmlFor="name">
-                                    Full Name
+                                    Bussines Name
                                 </label>
                                 <input
                                     type="text"
