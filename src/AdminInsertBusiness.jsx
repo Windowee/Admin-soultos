@@ -8,18 +8,89 @@ const AdminInsertBusiness = () => {
         password: '',
         role: '',
         place_id: '',
-        user_category_id: ''
+        user_category_id: '',
+        token: ''
     });
 
     const [loading, setLoading] = useState(false);
+    const [tokenLoading, setTokenLoading] = useState(false);
     const [message, setMessage] = useState('');
+    const [tokenMessage, setTokenMessage] = useState('');
+
+    // Static data from your database tables
+    const places = [
+        { id: 1, name: 'Νομός Αττικής', region_id: null },
+        { id: 2, name: 'Αθήνα', region_id: null },
+        { id: 3, name: 'Πειραιάς', region_id: 2 },
+        { id: 4, name: 'Θεσσαλονίκη', region_id: null },
+        { id: 5, name: 'Πάτρα', region_id: null }
+    ];
+
+    const eventCategories = [
+        { id: 1, name: 'FOOD', parent_id: null },
+        { id: 5, name: 'ACTIVITIES', parent_id: null },
+        { id: 6, name: 'SHOWS', parent_id: null }
+    ];
+
+    // Helper function to get category display name with parent
+    const getCategoryDisplayName = (category) => {
+        if (category.parent_id) {
+            const parent = eventCategories.find(cat => cat.id === category.parent_id);
+            return parent ? `${parent.name} > ${category.name}` : category.name;
+        }
+        return category.name;
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        
+        // For token, only allow digits and limit to 6 characters
+        if (name === 'token') {
+            const digitOnly = value.replace(/\D/g, '').slice(0, 6);
+            setFormData(prev => ({
+                ...prev,
+                [name]: digitOnly
+            }));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
+    };
+
+    const handleTokenValidation = async () => {
+        if (!formData.token || formData.token.length !== 6) {
+            setTokenMessage('Please enter a valid 6-digit token');
+            return;
+        }
+
+        setTokenLoading(true);
+        setTokenMessage('');
+
+        try {
+            const response = await fetch('https://www.windowee.com/api/v2/guest/auth/register-validation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ token: parseInt(formData.token) })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Token validation failed');
+            }
+
+            const result = await response.json();
+            setTokenMessage('Token validated successfully!');
+
+        } catch (error) {
+            console.error('Error validating token:', error);
+            setTokenMessage(`Token validation error: ${error.message}`);
+        } finally {
+            setTokenLoading(false);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -34,7 +105,7 @@ const AdminInsertBusiness = () => {
                 name: formData.name,
                 password: formData.password,
                 role: formData.role,
-                user_category_id: formData.user_category_id ? parseInt(formData.user_category_id) : null
+                user_category_id: parseInt(formData.user_category_id)
             };
 
             // Add place_id only if it has a value
@@ -42,7 +113,15 @@ const AdminInsertBusiness = () => {
                 submitData.place_id = parseInt(formData.place_id);
             }
 
-            const response = await fetch('https://windowee.com/guest/auth/register', {
+            // Add token if provided - convert to number
+            if (formData.token) {
+                submitData.token = parseInt(formData.token);
+            }
+
+            // Log the data being sent for debugging
+            console.log('Sending data to API:', submitData);
+
+            const response = await fetch('https://www.windowee.com/api/v2/guest/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,7 +131,8 @@ const AdminInsertBusiness = () => {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to register user');
+                console.error('API Error Response:', errorData);
+                throw new Error(errorData.message || errorData.error || 'Failed to register user');
             }
 
             const result = await response.json();
@@ -65,8 +145,10 @@ const AdminInsertBusiness = () => {
                 password: '',
                 role: '',
                 place_id: '',
-                user_category_id: ''
+                user_category_id: '',
+                token: ''
             });
+            setTokenMessage('');
 
         } catch (error) {
             console.error('Error registering user:', error);
@@ -77,28 +159,28 @@ const AdminInsertBusiness = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="max-w-2xl mx-auto px-4">
-                <div className="bg-white rounded-lg shadow-md p-8">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+        <div className="register-container">
+            <div className="register-wrapper">
+                <div className="register-card">
+                    <h2 className="page-title">
                         User Registration
                     </h2>
                     
                     {message && (
-                        <div className={`mb-6 p-4 rounded-md ${
+                        <div className={`message ${
                             message.includes('Error') || message.includes('Failed')
-                                ? 'bg-red-50 border border-red-200 text-red-700'
-                                : 'bg-green-50 border border-green-200 text-green-700'
+                                ? 'error'
+                                : 'success'
                         }`}>
                             {message}
                         </div>
                     )}
 
-                    <div onSubmit={handleSubmit} className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Full Name *
+                    <div className="register-form">
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="name">
+                                    Full Name
                                 </label>
                                 <input
                                     type="text"
@@ -107,14 +189,13 @@ const AdminInsertBusiness = () => {
                                     value={formData.name}
                                     onChange={handleInputChange}
                                     required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                     placeholder="Enter your full name"
                                 />
                             </div>
 
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Email Address *
+                            <div className="form-group">
+                                <label htmlFor="email">
+                                    Email Address
                                 </label>
                                 <input
                                     type="email"
@@ -123,15 +204,14 @@ const AdminInsertBusiness = () => {
                                     value={formData.email}
                                     onChange={handleInputChange}
                                     required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                     placeholder="Enter your email address"
                                 />
                             </div>
                         </div>
 
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                                Password *
+                        <div className="form-group">
+                            <label htmlFor="password">
+                                Password
                             </label>
                             <input
                                 type="password"
@@ -140,14 +220,13 @@ const AdminInsertBusiness = () => {
                                 value={formData.password}
                                 onChange={handleInputChange}
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                 placeholder="Enter your password"
                             />
                         </div>
 
-                        <div>
-                            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-                                User Role *
+                        <div className="form-group">
+                            <label htmlFor="role">
+                                User Role
                             </label>
                             <select
                                 id="role"
@@ -155,7 +234,6 @@ const AdminInsertBusiness = () => {
                                 value={formData.role}
                                 onChange={handleInputChange}
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                             >
                                 <option value="">Select role</option>
                                 <option value="business">Business</option>
@@ -163,48 +241,105 @@ const AdminInsertBusiness = () => {
                             </select>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label htmlFor="place_id" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Place ID (Optional)
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="place_id">
+                                    Place (Optional)
                                 </label>
-                                <input
-                                    type="number"
+                                <select
                                     id="place_id"
                                     name="place_id"
                                     value={formData.place_id}
                                     onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                    placeholder="Enter place ID"
-                                />
+                                >
+                                    <option value="">Select a place</option>
+                                    {places.map(place => (
+                                        <option key={place.id} value={place.id}>
+                                            {place.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
-                            <div>
-                                <label htmlFor="user_category_id" className="block text-sm font-medium text-gray-700 mb-2">
-                                    User Category ID *
+                            <div className="form-group">
+                                <label htmlFor="user_category_id">
+                                    Business Category
                                 </label>
-                                <input
-                                    type="number"
+                                <select
                                     id="user_category_id"
                                     name="user_category_id"
                                     value={formData.user_category_id}
                                     onChange={handleInputChange}
                                     required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                    placeholder="Enter category ID"
-                                />
+                                >
+                                    <option value="">Select a category</option>
+                                    {eventCategories.map(category => (
+                                        <option key={category.id} value={category.id}>
+                                            {getCategoryDisplayName(category)}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
 
+                        {/* Token Validation Section */}
+                        <div className="form-group">
+                            <label htmlFor="token">
+                                6-Digit Token (Optional)
+                            </label>
+                            <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                                <input
+                                    type="text"
+                                    id="token"
+                                    name="token"
+                                    value={formData.token}
+                                    onChange={handleInputChange}
+                                    maxLength="6"
+                                    placeholder="000000"
+                                    style={{ 
+                                        flex: 1,
+                                        textAlign: 'center',
+                                        fontSize: '18px',
+                                        letterSpacing: '3px'
+                                    }}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleTokenValidation}
+                                    disabled={tokenLoading || !formData.token || formData.token.length !== 6}
+                                    style={{
+                                        padding: '12px 24px',
+                                        backgroundColor: tokenLoading || !formData.token || formData.token.length !== 6 ? '#666' : '#28a745',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '6px',
+                                        cursor: tokenLoading || !formData.token || formData.token.length !== 6 ? 'not-allowed' : 'pointer',
+                                        fontSize: '14px',
+                                        fontWeight: '600',
+                                        transition: 'all 0.3s ease',
+                                        opacity: tokenLoading || !formData.token || formData.token.length !== 6 ? 0.6 : 1
+                                    }}
+                                >
+                                    {tokenLoading ? 'Validating...' : 'Validate'}
+                                </button>
+                            </div>
+                            
+                            {tokenMessage && (
+                                <div className={`message ${
+                                    tokenMessage.includes('error') || tokenMessage.includes('failed') || tokenMessage.includes('Please enter')
+                                        ? 'error'
+                                        : 'success'
+                                }`} style={{ marginTop: '12px', marginBottom: '0' }}>
+                                    {tokenMessage}
+                                </div>
+                            )}
+                        </div>
+
                         <button 
-                            type="submit"
+                            type="button"
                             onClick={handleSubmit}
                             disabled={loading}
-                            className={`w-full py-3 px-4 rounded-md font-medium text-white transition-colors ${
-                                loading 
-                                    ? 'bg-gray-400 cursor-not-allowed' 
-                                    : 'bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-                            }`}
+                            className="submit-button"
                         >
                             {loading ? 'Registering...' : 'Register User'}
                         </button>
